@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-6">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-image: url(giphy.gif);  
+      background-size: cover;
+      height: 100vh;
+    } 
+
+    .quiz{
+      width: 70px;
+    }
+
+    #questions{
+      box-shadow: 5px 5px 5px #03adfc;
+      transition: 18s ease-out;
+      background: #15d7d7; 
+      border-radius: 11px;
+      width: 200px;
+      height: 50px;
+      color: #272727;
+      display: inline-block;
+      font: normal bold 28px/50px "Open Sans", sans-serif;
+      text-align: center;
+      text-shadow: 1px 1px #ad4d4d;
+      padding: 0%;
+    }
+
+    #quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #924343;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
+    }
+
+    .card {
+      border-radius: 50px;
+      background-color: #fdfdfd;
+      width: 80%;
+      margin-left: 12%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .option {
+      background: #b9babb69;
+      color: rgb(0, 0, 0);
+      margin: 5px;
+      padding: 10px;
+      border: 3px solid #ccc;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+      height: 20px;
+    }
+
+    .option:hover {
+      background: linear-gradient(to bottom, #4760ce, #12248b);
+      color: #ffffff;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    button {
+      display: inline-block;
+      padding: 12px 28px;
+      margin: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #fff;
+      background-image: linear-gradient(to bottom right, #00ff0d, #0072ff);
+      border: none;
+      border-radius: 40px;
+      box-shadow: 0px 4px 0px #0072ff;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0px 6px 0px #0072ff;
+    }
+
+    button:active {
+      transform: translateY(0px);
+      box-shadow: none;
+      background-image: linear-gradient(to bottom right, #0072ff, #00c6ff);
+    }
+
+    button:before,
+    button:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    button:before {
+      top: -3px;
+      left: -3px;
+      border-radius: 40px;
+      border-top: 3px solid #fff;
+      border-left: 3px solid #fff;
+    }
+
+    button:after {
+      bottom: -3px;
+      right: -3px;
+      border-radius: 40px;
+      border-bottom: 3px solid #fff;
+      border-right: 3px solid #fff;
+    }
+  </style>
+  <link rel="icon" type="image/x-icon" href="Untitled.png" />
+</head>
+<body>
+  <div class="card">
+    <h1>QUIZ GAMES</h1>
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <button onclick="checkAnswer()">Kembali</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Siapa pembalap MotoGP yang meraih gelar juara dunia terbanyak?",
+        options: ["Valentino Rossi", "Jack Miller", "Brand binder", "Fabio Quartararo"],
+        correctAnswer: "Valentino Rossi"
+      },
+      {
+        question: "Berapa umur Valentino Rossi saat pensiun?",
+        options: ["20 Tahun", "42 Tahun", "70 Tahun", "30 Tahun"],
+        correctAnswer: "42 Tahun"
+      },
+      {
+        question: "Apa negara kebangsaan Brand Binder?",
+        options: ["Afrika Selatan", "Qatar", "Amerika", "Inggris"],
+        correctAnswer: "Afrika Selatan"
+      },
+      {
+        question: "Apa nama sirkuit yang ada di Italia?",
+        options: ["Mandalika", "Mugello", "Austrin", "Valencia"],
+        correctAnswer: "Mugello"
+      },
+      {
+        question: "Siapa pembalap yang dijuluki Baby Alien?",
+        options: ["Marc Marquez", "Luca Marini", "Zohann Zarco", "Jorge Martin"],
+        correctAnswer: "Marc Marquez"
+      }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const questionElement = document.getElementById('question');
+      const optionsElement = document.getElementById('options');
+
+      questionElement.textContent = questions[currentQuestion].question;
+
+      optionsElement.innerHTML = "";
+      questions[currentQuestion].options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.textContent = option;
+        optionElement.setAttribute('data-index', index);
+        optionElement.onclick = selectOption;
+        optionsElement.appendChild(optionElement);
+      });
+    }
+
+    function selectOption(event) {
+      const selectedOptionIndex = event.target.getAttribute('data-index');
+      const correctAnswer = questions[currentQuestion].correctAnswer;
+
+      if (questions[currentQuestion].options[selectedOptionIndex] === correctAnswer) {
+        score++;
+      }
+
+      currentQuestion++;
+
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        displayResult();
+      }
+    }
+
+    function displayResult() {
+      const resultElement = document.getElementById('result');
+      resultElement.textContent = `Skor Anda ${score}/${questions.length} poin`;
+    }
+
+    function checkAnswer() {
+      const optionsElement = document.getElementById('options');
+      const selectedOption = optionsElement.querySelector('.option:hover');
+
+      if (selectedOption) {
+        selectedOption.click();
+      } else {
+        window.history.back();
+      }
+    }
+
+    // Shuffle questions and load the first question
+    shuffle(questions);
+    loadQuestion();
+
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

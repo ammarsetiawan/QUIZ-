@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+  <meta charset="UTF-6">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz</title>
+  <style>
+   
+    
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-image: url(giphy.gif);  
+    background-size: cover;
+    height: 100vh;
+    
+    
+    } 
+
+    .quiz{
+     width: 70px;
+    }
+
+    #questions{
+      box-shadow:5px 5px 5px  #03adfc;
+    transition: 18s ease-out;
+    background:    #15d7d7; 
+    border-radius: 11px;
+    width:         200px;
+    height:        50px;
+    color:         #272727;
+    display:       inline-block;
+    font:          normal bold 28px/50px "Open Sans", sans-serif;
+    text-align:    center;
+    text-shadow:   1px 1px #ad4d4d;
+    padding: 0%;
+  }
+    
+
+    #quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #924343;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
+    }
+
+    .card{
+      border-radius: 50px;
+      background-color: #fdfdfd;
+      width: 80%;
+      margin-left: 12%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .option {
+      
+      background: #b9babb69;
+      color: rgb(0, 0, 0);
+      margin: 5px;
+      padding: 10px;
+      border: 3px solid #ccc;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+    }
+
+    .option:hover {
+      background:linear-gradient(to bottom,#4760ce,#12248b);
+      color: #ffffff;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    button {
+  display: inline-block;
+  padding: 12px 28px;
+  margin: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  background-image: linear-gradient(to bottom right, #00ff0d, #0072ff);
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #0072ff;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 0px #0072ff;
+}
+
+button:active {
+  transform: translateY(0px);
+  box-shadow: none;
+  background-image: linear-gradient(to bottom right, #0072ff, #00c6ff);
+}
+
+button:before,
+button:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+button:before {
+  top: -3px;
+  left: -3px;
+  border-radius: 40px;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+}
+
+button:after {
+  bottom: -3px;
+  right: -3px;
+  border-radius: 40px;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
+}
+
+    
+  </style>
+   <link rel="icon" type="image/x-icon" href="Untitled.png" />
+</head>
+<body>
+  <div class="card">
+  <h1>QUIZ GAMES</h1>
+  <div id="question" class="question"></div>
+  <div id="options" class="options"></div>
+  <button onclick="checkAnswer()">Kembali</button>
+  <div id="result"></div></div>
+
+<script>
+  const questions = [
+    {
+      question: "Apa yang menyebabkan Perang Diponegoro?",
+      options: ["karena penindasan dan eksploitasi", "karena kurang ilmu", "karena gelisah", "karena tiba-tiba datang"],
+      correctAnswer: "karena penindasan dan eksploitasi"
+    },
+    {
+      question: "Apa yang dimaksud dengan Konferensi Meja Bundar?",
+      options: ["pertemuan antar pemimpin negara", "pertemuan diplomatik antara Indonesia dan Belanda", "merangkul rakyat indonesia", "pertemuan untuk menyerah"],
+      correctAnswer: "pertemuan diplomatik antara Indonesia dan Belanda"
+    },
+    {
+     question: "Kapan Uni Soviet didirikan?",
+     options: ["19 Juni 1900", "20 Juli 1704", "7 April 2000", "30 Desember 1922"],
+     correctAnswer: "30 Desember 1922"
+    },
+    {
+     question: "Kapan Uni Soviet runtuh?",
+     options: ["17 Juli 1603", " 22 Januari 1211", "26 Desember 1991", " 2 Juli 1984"],
+     correctAnswer: "26 Desember 1991"
+    },
+    {
+     question: "kapan nazi mulai menyerang uni soviet?",
+     options: [" 29 April 1897", " 22 Juni 1941", " 4 Jli 1541", " 30 Januari 1901"],
+     correctAnswer: " 22 Juni 1941"
+    },
+  ];
+
+  function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+  let currentQuestion = 0;
+  let score = 0;
+  function loadQuestion() {
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+
+    questionElement.textContent = questions[currentQuestion].question;
+
+    optionsElement.innerHTML = "";
+    questions[currentQuestion].options.forEach((option, index) => {
+      const optionElement = document.createElement('div');
+      optionElement.className = 'option';
+      optionElement.textContent = option;
+      optionElement.setAttribute('data-index', index);
+      optionElement.onclick = selectOption;
+      optionsElement.appendChild(optionElement);
+    });
+  }
+
+  function selectOption(event) {
+    const selectedOptionIndex = event.target.getAttribute('data-index');
+    const correctAnswer = questions[currentQuestion].correctAnswer;
+
+    if (questions[currentQuestion].options[selectedOptionIndex] === correctAnswer) {
+      score++;
+    }
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+      loadQuestion();
+    } else {
+      displayResult();
+    }
+  }
+
+  function displayResult() {
+    const resultElement = document.getElementById('result');
+    resultElement.textContent = `Skor Anda ${score}/${questions.length} poin`;
+  }
+
+  function checkAnswer() {
+    const optionsElement = document.getElementById('options');
+    const selectedOption = optionsElement.querySelector('.option:hover');
+
+    if (selectedOption) {
+      selectedOption.click();
+    } else {
+      window.history.back();
+    }
+  }
+
+
+  shuffle(questions);
+  loadQuestion();
+  
+  function goBack() {
+            window.history.back();
+        }
+</script>
+</body>
+</html>
